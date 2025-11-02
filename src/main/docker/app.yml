@@ -23,7 +23,7 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
-  postgresql:
-    extends:
-      file: ./postgresql.yml
-      service: postgresql
+  # postgresql:
+  #   extends:
+  #     file: ./postgresql.yml
+  #     service: postgresql
