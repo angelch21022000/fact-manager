@@ -10,6 +10,7 @@ import { AccountService } from 'app/core/auth/account.service';
   selector: 'jhi-login',
   imports: [SharedModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
+  styleUrl: './login.scss',
 })
 export default class LoginComponent implements OnInit, AfterViewInit {
   username = viewChild.required<ElementRef>('username');
@@ -17,8 +18,8 @@ export default class LoginComponent implements OnInit, AfterViewInit {
   authenticationError = signal(false);
 
   loginForm = new FormGroup({
-    username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    username: new FormControl('', { nonNullable: true }),
+    password: new FormControl('', { nonNullable: true }),
     rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
   });
 

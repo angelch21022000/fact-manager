@@ -1,23 +1,17 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
+// Solo estilos esenciales que no se pueden lograr con clases de Bootstrap/PrimeNG
+// :host ::ng-deep {
+//   .p-card {
+//     transition: transform 0.2s ease-in-out;
 
-.hipster {
-  display: inline-block;
-  width: 347px;
-  height: 497px;
-  background: url('../../content/images/jhipster_family_member_3.svg') no-repeat center top;
-  background-size: contain;
-}
+//     &:hover {
+//       transform: translateY(-2px);
+//     }
+//   }
+// }
 
-/* wait autoprefixer update to allow simple generation of high pixel density media query */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (-moz-min-device-pixel-ratio: 2),
-  only screen and (-o-min-device-pixel-ratio: 2/1),
-  only screen and (min-resolution: 192dpi),
-  only screen and (min-resolution: 2dppx) {
-  .hipster {
-    background: url('../../content/images/jhipster_family_member_3.svg') no-repeat center top;
-    background-size: contain;
+// Asegurar que las tarjetas tengan la misma altura en la misma fila
+.row {
+  .p-card {
+    height: 100%;
   }
 }

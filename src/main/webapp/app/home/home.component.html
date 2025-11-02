@@ -1,4 +1,4 @@
-<div class="row">
+<!-- <div class="row">
   <div class="col-md-3">
     <span class="hipster img-fluid rounded"></span>
   </div>
@@ -79,4 +79,192 @@
       >!
     </p>
   </div>
+</div> -->
+<jhi-login *ngIf="account() === null" />
+
+<div *ngIf="account() !== null" class="container-fluid py-4 bg-light min-vh-100">
+  <!-- Tarjetas Resumen de Caja -->
+  <div class="row mb-3">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <p-card class="border-0 shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-primary fw-bold mb-1">{{ dailyRevenue | currency: 'USD' : 'symbol' : '1.2-2' }}</h3>
+            <p class="text-muted mb-0 small">Ingresos del Día</p>
+          </div>
+          <p-avatar icon="pi pi-money-bill" class="bg-primary bg-opacity-10 text-primary" size="xlarge" shape="circle" />
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <p-card class="border-0 shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-success fw-bold mb-1">{{ invoicesToday }}</h3>
+            <p class="text-muted mb-0 small">Facturas Hoy</p>
+          </div>
+          <p-avatar icon="pi pi-file-check" class="bg-success bg-opacity-10 text-success" size="xlarge" shape="circle" />
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <p-card class="border-0 shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-warning fw-bold mb-1">{{ pendingInvoices }}</h3>
+            <p class="text-muted mb-0 small">Facturas de Turno</p>
+          </div>
+          <p-avatar icon="pi pi-clock" class="bg-warning bg-opacity-10 text-warning" size="xlarge" shape="circle" />
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <p-card class="border-0 shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-danger fw-bold mb-1">{{ voidedInvoices }}</h3>
+            <p class="text-muted mb-0 small">Anuladas Hoy</p>
+          </div>
+          <p-avatar icon="pi pi-ban" class="bg-danger bg-opacity-10 text-danger" size="xlarge" shape="circle" />
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Tablas de Facturación -->
+  <div class="row">
+    <!-- Facturas del Día -->
+    <div class="col-xl-8 mb-4">
+      <p-card header="Facturas del Día" class="border-0 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <p-button label="Nueva Factura" icon="pi pi-plus" severity="success" size="small"></p-button>
+          <p-button label="Exportar" icon="pi pi-download" severity="help" [outlined]="true" size="small"></p-button>
+        </div>
+
+        <p-table
+          [value]="todayInvoices"
+          [paginator]="true"
+          [rows]="5"
+          [tableStyle]="{ 'min-width': '60rem' }"
+          styleClass="p-datatable-striped p-datatable-gridlines"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="number" style="width: 15%">N° Factura <p-sortIcon field="number"></p-sortIcon></th>
+              <th pSortableColumn="client" style="width: 25%">Cliente <p-sortIcon field="client"></p-sortIcon></th>
+              <th pSortableColumn="time" style="width: 15%">Hora <p-sortIcon field="time"></p-sortIcon></th>
+              <th pSortableColumn="amount" style="width: 15%">Monto <p-sortIcon field="amount"></p-sortIcon></th>
+              <th style="width: 15%">Método Pago</th>
+              <th style="width: 10%">Estado</th>
+              <th style="width: 5%">Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-invoice>
+            <tr>
+              <td class="fw-bold">{{ invoice.number }}</td>
+              <td>{{ invoice.client }}</td>
+              <td>{{ invoice.time }}</td>
+              <td>{{ invoice.amount | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+              <td>
+                <p-tag
+                  [value]="invoice.paymentMethod"
+                  [severity]="getPaymentMethodSeverity(invoice.paymentMethod)"
+                  styleClass="me-1"
+                ></p-tag>
+              </td>
+              <td>
+                <p-tag [value]="invoice.status" [severity]="getStatusSeverity(invoice.status)"></p-tag>
+              </td>
+              <td>
+                <div class="d-flex gap-1">
+                  <p-button
+                    icon="pi pi-print"
+                    [text]="true"
+                    severity="info"
+                    size="small"
+                    pTooltip="Imprimir"
+                    tooltipPosition="top"
+                  ></p-button>
+                  <p-button
+                    icon="pi pi-eye"
+                    [text]="true"
+                    severity="help"
+                    size="small"
+                    pTooltip="Ver detalle"
+                    tooltipPosition="top"
+                  ></p-button>
+                  <p-button
+                    *ngIf="invoice.status !== 'Anulada'"
+                    icon="pi pi-times"
+                    [text]="true"
+                    severity="danger"
+                    size="small"
+                    pTooltip="Anular"
+                    tooltipPosition="top"
+                  ></p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted"><i class="pi pi-inbox me-2"></i>No hay facturas registradas hoy</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <!-- Resumen Rápido y Conversión -->
+    <div class="col-xl-4 mb-4">
+      <!-- Tipo de Cambio -->
+      <p-card header="Tipo de Cambio" class="border-0 shadow-sm">
+        <div class="text-center py-3">
+          <h4 class="text-primary mb-2">USD a Bs.D</h4>
+          <p class="h2 text-success mb-3 fw-bold">{{ exchangeRate }} Bs.D</p>
+          <p class="small text-muted mb-2">Actualizado: {{ today | date: 'HH:mm' }}</p>
+          <!-- <p-divider></p-divider> -->
+          <p-button label="Actualizar" icon="pi pi-refresh" [text]="true" size="small" class="mt-2" severity="help"></p-button>
+        </div>
+      </p-card>
+
+      <br />
+
+      <!-- Resumen de Caja -->
+      <p-card header="Resumen de Caja" class="border-0 shadow-sm mb-4">
+        <div class="list-group list-group-flush">
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-2">
+            <span class="text-muted">Apertura de Caja</span>
+            <strong>{{ openingBalance | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-2">
+            <span class="text-muted">Ventas Totales</span>
+            <strong class="text-success">{{ dailyRevenue | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-2">
+            <span class="text-muted">Egresos</span>
+            <strong class="text-danger">{{ expenses | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-2">
+            <span class="text-muted">Saldo en Caja</span>
+            <strong class="text-primary">{{ currentBalance | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-2 bg-light rounded">
+            <span class="text-muted fw-bold">Diferencia</span>
+            <strong [ngClass]="balanceDifference >= 0 ? 'text-success' : 'text-danger'">
+              {{ balanceDifference | currency: 'USD' : 'symbol' : '1.2-2' }}
+            </strong>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
 </div>
+
+<p-toast position="top-right"></p-toast>
+<!-- <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog> -->
+
+<p-toast></p-toast>
