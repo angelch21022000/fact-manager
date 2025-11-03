@@ -5,7 +5,7 @@
     "baseName": "factManager",
     "blueprints": [],
     "buildTool": "maven",
-    "cacheProvider": "ehcache",
+    "cacheProvider": "caffeine",
     "clientFramework": "angular",
     "clientPackageManager": "npm",
     "creationTimestamp": 1762027318961,
